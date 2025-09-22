@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Arquitectura: Next.js App Router con TypeScript estricto. Estado global en AuthorsProvider (Context) para autores y favoritos, montado en app/layout.tsx para persistir sólo durante navegación (no storage). useAuthors expone CRUD + favoritos. Páginas /authors, /authors/new, /authors/[id]/edit, /favoritos. UI con Tailwind.
 
-## Getting Started
+Parte B: Implemente la parte de Accesibilidad (cómo validar: tabulación, aria-pressed, role="alert") 
+Navegación con teclado y foco visible
 
-First, run the development server:
+Todos los controles son elementos nativos (<button>, <a>, <input>, <textarea>, <label>).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+El foco es visible por defecto y se refuerza con utilidades de Tailwind (focus:ring-2, etc.) en botones de formulario.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Código relevante:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+components/AuthorForm.tsx (inputs/botón con estilos de foco)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+components/AuthorList.tsx (botones de acciones)
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+Atributos ARIA en acciones
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Botón de favoritos usa aria-pressed="true|false" para anunciar el estado (toggle) y aria-label para describir la acción.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Botones Editar y Eliminar tienen aria-label con el nombre del autor.
 
-## Deploy on Vercel
+Código: components/AuthorList.tsx.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Mensajes de error anunciados y asociación de campos
+
+El formulario usa React Hook Form y expone errores con <p role="alert" id="error-…">.
+
+Cada <input> indica aria-invalid y se asocia al mensaje vía aria-describedby.
+
+Labels conectados con htmlFor/id.
+
+Código: components/AuthorForm.tsx.
+
+
+Estructura semántica
+
+Encabezados (<h1>, <h2>) y listas (<ul>/<li>) en las páginas.
+
+Errores generales del fetch se muestran con role="alert".
+
+Código: app/authors/page.tsx, components/AuthorList.tsx.
+
+
+
+Cómo correr:
+
+Frontend: .env.local con NEXT_PUBLIC_API_BASE=http://127.0.0.1:8080, luego npm run dev 
